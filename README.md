@@ -4,22 +4,22 @@
 
 ## 输出效果
 
-F:\project\tree
-├─file-tree // fileTree文件夹
-|     ├─config.json // 配置文件
-|     ├─fileComment.json // 文件注释缓存
-|     └─fileTree.md // 输出文件
-├─util // 工具函数
-|  └─index.ts // 入口文件
-├─.gitignore // git忽略文件
-├─defaultConfig.json // fileTree默认配置项
-├─index.ts // 入口文件
-├─package-lock.json
-├─package.json
-├─README.md
-├─tsconfig.json
-├─yarn-error.log
-└─yarn.lock
+> F:\project\tree
+> ├─file-tree // fileTree文件夹
+> |     ├─config.json // 配置文件
+> |     ├─fileComment.json // 文件注释缓存
+> |     └─fileTree.md // 输出文件
+> ├─util // 工具函数
+> |  └─index.ts // 入口文件
+> ├─.gitignore // git忽略文件
+> ├─defaultConfig.json // fileTree默认配置项
+> ├─index.ts // 入口文件
+> ├─package-lock.json
+> ├─package.json
+> ├─README.md
+> ├─tsconfig.json
+> ├─yarn-error.log
+> └─yarn.lock
 
 ## 安装依赖
 
