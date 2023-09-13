@@ -17,8 +17,9 @@
     "findup-sync": "^5.0.0"
   },
   "scripts": {
-    "dev": "nodemon ./index.ts",
-    "build": "tsc && npm link",
+    "dev": " ts-node ./index.ts",
+    "link": "tsc && npm link",
+    "build": "tsc",
     "npm publish": "npm publish --access public"
   },
   "bin": {
