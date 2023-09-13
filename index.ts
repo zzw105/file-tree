@@ -2,17 +2,10 @@
 import { Command } from 'commander'
 import pac from './package.json'
 import fs from 'fs'
-import { getConfig, question, readLine } from './util'
+import { getConfig, readLine, sortDir } from './util'
 import findup from 'findup-sync'
 import path from 'path'
-
-class fileStructure {
-  [index: string]: (string | fileStructure)[]
-}
-
-interface fileCommentType {
-  [index: string]: string
-}
+import { fileCommentType, fileStructure } from './util/type'
 
 const program = new Command()
 
@@ -21,23 +14,12 @@ const program = new Command()
   program.version(pac.version)
 
   // 项目的路径
-  const directory = process.cwd()
+  const directory = process.cwd() // F:\project\tree
 
   // 配置项目
   const config = getConfig()
 
-  function sortDir(arr: (string | fileStructure)[]) {
-    let i = arr.length - 1
-    while (i >= 0) {
-      if (typeof arr[i] === 'object') {
-        let obj = arr.splice(i, 1)
-        arr.unshift(obj[0])
-      }
-      i--
-    }
-    return arr
-  }
-
+  // 文件层级转换为对象
   const dirToJson = (path: string) => {
     let stats = fs.lstatSync(path)
 
@@ -46,33 +28,16 @@ const program = new Command()
     if (stats.isDirectory()) {
       let dir = fs.readdirSync(path)
 
-      // if (ignoreRegex) {
-      //   dir = dir.filter((val) => {
-      //     return !ignoreRegex.test(val)
-      //   })
-      // }
+      // 过滤忽略文件
+      const filterDir = dir.filter((item) => !config.ignore.includes(item))
 
-      let dirObj = dir.map((child) => {
+      let dirObj = filterDir.map((child) => {
         let childStats = fs.lstatSync(path + '/' + child)
         return childStats.isDirectory() ? dirToJson(path + '/' + child) : child
       })
 
-      // const popPop = (arr: (string | fileStructure)[]) => {
-      //   if (arr.length === 0) return arr
-      //   if (typeof arr[arr.length - 1] !== 'string') {
-      //     const popObj = arr.pop() as fileStructure
-      //     arr.unshift(popObj)
-      //     if (typeof arr[arr.length - 1] !== 'string') {
-      //       popPop(arr)
-      //     }
-      //   }
-      //   return arr
-      // }
-
-      // if (dirObj.length > 0 && typeof dirObj[0] !== typeof dirObj[dirObj.length - 1]) {
-      //   dirObj = popPop(dirObj)
-      // }
       let dirName = path.replace(/.*\/(?!$)/g, '')
+      // 排序
       structure[dirName] = sortDir(dirObj)
     } else {
       let fileName = path.replace(/.*\/(?!$)/g, '')
@@ -83,14 +48,22 @@ const program = new Command()
 
   const structureJson = dirToJson(directory)
 
+  // 仅一层的不做处理直接弹出
   if (typeof structureJson === 'string') {
     console.log('此目标不是目录')
-    return
+    process.exit()
   }
 
+  // 读取文件注释的缓存文件
   const fileCommentPath = findup('file-tree/fileComment.json')
+
+  // 现有的注释数据
   const fileComment: fileCommentType = (fileCommentPath && (require(fileCommentPath) as fileCommentType)) || {}
+
+  // 最终输出的文件
   let outputString = ''
+
+  // 不同的制表符
   const characters = {
     border: '|',
     contain: '├',
@@ -98,13 +71,9 @@ const program = new Command()
     last: '└',
   }
 
+  // 绑定文件的注释
   const addComment = async (structureJson: fileStructure, path: string) => {
     const key = Object.keys(structureJson)[0]
-
-    if (config.ignore.includes(key)) {
-      delete structureJson[key]
-      return
-    }
 
     const arr = structureJson[key]
     let fileName = ''
@@ -120,33 +89,29 @@ const program = new Command()
         await addComment(element, `${path}\\${Object.keys(element)[0]}`)
       }
 
-      if (!config.ignore.includes(fileName)) {
-        const filePath = `${path}\\${fileName}`
-        if (fileComment[filePath] === undefined) {
-          const inputString = await readLine(`\n\n请输入此${fileType}的注释\n${filePath}\n`)
-
-          // const userText = iconv.decode(
-          //   readlineSync.question(`\n\n请输入此${fileType}的注释\n${filePath}\n`, { encoding: 'gbk' }),
-          //   'gbk'
-          // )
-
-          fileComment[filePath] = inputString
-        }
+      // 对未处理的文件加注释
+      const filePath = `${path}\\${fileName}`
+      if (fileComment[filePath] === undefined) {
+        const inputString = await readLine(`\n\n请输入此${fileType}的注释\n${filePath}\n`)
+        fileComment[filePath] = inputString
       }
     }
   }
 
   await addComment(structureJson, Object.keys(structureJson)[0])
 
+  // 写入文件作为缓存
   fs.writeFileSync(path.join(directory, './file-tree/fileComment.json'), JSON.stringify(fileComment), 'utf8')
 
+  // 输出树形结构
   const drawDirTree = (structureJson: fileStructure, placeholder: string, path: string) => {
     let { border, contain, line, last } = characters
     for (let i in structureJson) {
       if (Array.isArray(structureJson[i])) {
+        // 文件夹添加注释
         const filePath = `${path}`
-
         const annotation = fileComment[filePath] ? ' // ' + fileComment[filePath] : ''
+
         outputString += '\n' + placeholder + i + annotation
         placeholder = placeholder.replace(new RegExp(`${contain}`, 'g'), border)
         placeholder = placeholder.replace(new RegExp(`${line}`, 'g'), ' ')
@@ -162,11 +127,13 @@ const program = new Command()
 
             pl = placeholder.replace(regex, last) + line
           }
-          const filePath = `${path}\\${typeof val === 'string' ? val : Object.keys(val)[0]}`
 
+          // 获取注释
+          const filePath = `${path}\\${typeof val === 'string' ? val : Object.keys(val)[0]}`
           const annotation = fileComment[filePath] ? ' // ' + fileComment[filePath] : ''
 
           if (typeof val === 'string') {
+            // 文件添加注释
             outputString += '\n' + pl + val + annotation
           } else {
             let pl = placeholder
@@ -179,7 +146,12 @@ const program = new Command()
 
   drawDirTree(structureJson, '', Object.keys(structureJson)[0])
 
+  // log输出
   console.log(outputString)
+
+  // 文件输出
   fs.writeFileSync(path.join(directory, './file-tree/fileTree.md'), outputString)
+
+  // 结束
   process.exit()
 })()

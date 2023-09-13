@@ -23,8 +23,6 @@ F:\project\tree
 └─yarn.lock
 ```
 
-
-
 ## 安装依赖
 
 请在项目中安装，请勿全局安装
@@ -70,3 +68,11 @@ npm i @zzw_105/file-tree
 - [ ] 路径改为项目根目录为起始
 - [ ] 更好的视觉显示效果
 - [ ] 增加init功能
+
+## 感谢
+
+部分代码借鉴了treer包
+
+[treer npm](https://www.npmjs.com/package/treer)
+
+[treer github](https://github.com/derycktse/treer)
