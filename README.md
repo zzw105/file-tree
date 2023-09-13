@@ -6,21 +6,27 @@
 
 ```markdown
 F:\project\tree
-├─file-tree // fileTree文件夹
-|     ├─config.json // 配置文件
-|     ├─fileComment.json // 文件注释缓存
-|     └─fileTree.md // 输出文件
-├─util // 工具函数
-|  └─index.ts // 入口文件
-├─.gitignore // git忽略文件
-├─defaultConfig.json // fileTree默认配置项
-├─index.ts // 入口文件
+├─file-tree --------------------------- fileTree文件夹
+|     ├─config.json ------------------- 配置文件
+|     ├─fileComment.json -------------- 文件注释缓存
+|     └─fileTree.md ------------------- 输出文件
+├─test -------------------------------- te
+|  ├─a -------------------------------- a
+|  | ├─d ------------------------------ d
+|  | | └─e.js ------------------------- e
+|  ├─b -------------------------------- b
+|  | └─f.ts --------------------------- f
+|  └─c.txt ---------------------------- c
+├─util -------------------------------- 工具函数
+|  ├─defaultConfig.json --------------- 默认配置
+|  ├─index.ts ------------------------- 入口文件
+|  └─type.ts -------------------------- 类型约束
+├─.gitignore -------------------------- git忽略文件
+├─README.md
+├─index.ts ---------------------------- 入口文件
 ├─package-lock.json
 ├─package.json
-├─README.md
-├─tsconfig.json
-├─yarn-error.log
-└─yarn.lock
+└─tsconfig.json
 ```
 
 ## 安装依赖
@@ -66,7 +72,7 @@ npm i @zzw_105/file-tree
 
 - [ ] 支持全局使用以及命令参数
 - [ ] 路径改为项目根目录为起始
-- [ ] 更好的视觉显示效果
+- [x] 更好的视觉显示效果
 - [ ] 增加init功能
 
 ## 感谢

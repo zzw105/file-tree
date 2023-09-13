@@ -2,7 +2,7 @@
 import { Command } from 'commander'
 import pac from './package.json'
 import fs from 'fs'
-import { getConfig, readLine, sortDir } from './util'
+import { getConfig, newDash, readLine, sortDir } from './util'
 import findup from 'findup-sync'
 import path from 'path'
 import { fileCommentType, fileStructure } from './util/type'
@@ -103,6 +103,14 @@ const program = new Command()
   // 写入文件作为缓存
   fs.writeFileSync(path.join(directory, './file-tree/fileComment.json'), JSON.stringify(fileComment), 'utf8')
 
+  // 增加输出文本
+  const addOutputString = (outStringHeader: string, annotation: string) => {
+    const stringLength = outStringHeader.length
+
+    if (annotation) outputString += `${outStringHeader} ${newDash(40 - stringLength)} ${annotation}`
+    else outputString += outStringHeader
+  }
+
   // 输出树形结构
   const drawDirTree = (structureJson: fileStructure, placeholder: string, path: string) => {
     let { border, contain, line, last } = characters
@@ -110,9 +118,10 @@ const program = new Command()
       if (Array.isArray(structureJson[i])) {
         // 文件夹添加注释
         const filePath = `${path}`
-        const annotation = fileComment[filePath] ? ' // ' + fileComment[filePath] : ''
+        const annotation = fileComment[filePath]
 
-        outputString += '\n' + placeholder + i + annotation
+        addOutputString(`\n${placeholder}${i}`, annotation)
+
         placeholder = placeholder.replace(new RegExp(`${contain}`, 'g'), border)
         placeholder = placeholder.replace(new RegExp(`${line}`, 'g'), ' ')
 
@@ -130,11 +139,11 @@ const program = new Command()
 
           // 获取注释
           const filePath = `${path}\\${typeof val === 'string' ? val : Object.keys(val)[0]}`
-          const annotation = fileComment[filePath] ? ' // ' + fileComment[filePath] : ''
+          const annotation = fileComment[filePath]
 
           if (typeof val === 'string') {
             // 文件添加注释
-            outputString += '\n' + pl + val + annotation
+            addOutputString(`\n${pl}${val}`, annotation)
           } else {
             let pl = placeholder
             drawDirTree(val, pl, `${path}\\${Object.keys(val)[0]}`)

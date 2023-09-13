@@ -60,15 +60,11 @@ function sortDir(arr: (string | fileStructure)[]) {
     return x.charCodeAt(0) - y.charCodeAt(0)
   })
 
-  // let i = arr.length - 1
-  // while (i >= 0) {
-  //   if (typeof arr[i] === 'object') {
-  //     let obj = arr.splice(i, 1)
-  //     arr.unshift(obj[0])
-  //   }
-  //   i--
-  // }
   return [...folderList, ...fileList]
 }
 
-export { getConfig, question, readLine, sortDir }
+const newDash = (length: number) => {
+  return new Array(length).join('-')
+}
+
+export { getConfig, question, readLine, sortDir, newDash }
