@@ -67,4 +67,13 @@ const newDash = (length: number) => {
   return new Array(length).join('-')
 }
 
-export { getConfig, question, readLine, sortDir, newDash }
+// 获取文件扩展名
+const getExtension = (fileName: string) => {
+  const extensionArr = fileName.split('.')
+  extensionArr.shift()
+  if (extensionArr.length === 0) return ''
+  const extension = '.' + extensionArr.join('.')
+  return extension
+}
+
+export { getConfig, question, readLine, sortDir, newDash, getExtension }

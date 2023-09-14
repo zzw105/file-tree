@@ -2,7 +2,7 @@
 import { Command } from 'commander'
 import pac from './package.json'
 import fs from 'fs'
-import { getConfig, newDash, readLine, sortDir } from './util'
+import { getConfig, newDash, readLine, sortDir, getExtension } from './util'
 import findup from 'findup-sync'
 import path from 'path'
 import { fileCommentType, fileStructure } from './util/type'
@@ -40,27 +40,31 @@ const program = new Command()
   const config = getConfig()
 
   // 文件层级转换为对象
-  const dirToJson = (path: string) => {
-    let stats = fs.lstatSync(path)
+  const dirToJson = (pathString: string) => {
+    let stats = fs.lstatSync(pathString)
 
     const structure: fileStructure = {}
 
     if (stats.isDirectory()) {
-      let dir = fs.readdirSync(path)
+      let dir = fs.readdirSync(pathString)
 
+      // 过滤忽略文件夹
+      if (config.ignoreFolder.includes(path.basename(pathString))) dir = []
       // 过滤忽略文件
-      const filterDir = dir.filter((item) => !config.ignore.includes(item))
+      let filterDir = dir.filter((item) => !config.ignore.includes(item))
+      // 过滤忽略扩展名
+      filterDir = filterDir.filter((item) => !config.ignoreExtension.includes(getExtension(item)))
 
       let dirObj = filterDir.map((child) => {
-        let childStats = fs.lstatSync(path + '/' + child)
-        return childStats.isDirectory() ? dirToJson(path + '/' + child) : child
+        let childStats = fs.lstatSync(pathString + '/' + child)
+        return childStats.isDirectory() ? dirToJson(pathString + '/' + child) : child
       })
 
-      let dirName = path.replace(/.*\/(?!$)/g, '')
+      let dirName = pathString.replace(/.*\/(?!$)/g, '')
       // 排序
       structure[dirName] = sortDir(dirObj)
     } else {
-      let fileName = path.replace(/.*\/(?!$)/g, '')
+      let fileName = pathString.replace(/.*\/(?!$)/g, '')
       return fileName
     }
     return structure

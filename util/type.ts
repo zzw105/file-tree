@@ -8,6 +8,8 @@ class fileStructure {
 
 interface configType {
   ignore: string[]
-  export: string
+  ignoreExtension: string[]
+  ignoreFolder: string[]
+  dashLength: number
 }
 export { fileCommentType, fileStructure, configType }

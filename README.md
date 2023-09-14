@@ -70,6 +70,10 @@ npm i @zzw_105/file-tree
 
 - ignore：string[] 忽略的文件和文件夹
 - dashLength：number 输出文件的破折号长度
+- ignoreExtension：string[] 忽略的扩展名
+- ignoreFolder：string[] 忽略特定文件夹下的所有文件
+
+***ignoreFolder内的文件夹依然会在最终的树中显示，但文件夹下的所以文件将被忽略***
 
 ## 问题
 

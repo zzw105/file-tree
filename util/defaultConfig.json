@@ -4,15 +4,15 @@
     ".git",
     "dist",
     "yarn.lock",
-    "yarn-error.log",
     ".vscode",
-    "npm-debug.log",
-    "yarn-debug.log",
-    "yarn-error.log",
-    "pnpm-debug.log",
-    "lerna-debug.log",
     ".idea",
     ".DS_Store"
+  ],
+  "ignoreExtension": [
+    ".log"
+  ],
+  "ignoreFolder": [
+    "file-tree"
   ],
   "dashLength": 40
 }
