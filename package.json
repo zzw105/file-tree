@@ -1,6 +1,6 @@
 {
   "name": "@zzw_105/file-tree",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "",
   "main": "dist/index.js",
   "devDependencies": {
@@ -30,5 +30,12 @@
   "license": "MIT",
   "keywords": [
     "tree"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zzw105/file-tree.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zzw105/file-tree/issues"
+  }
 }

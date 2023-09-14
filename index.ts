@@ -158,7 +158,8 @@ const program = new Command()
         placeholder = placeholder.replace(new RegExp(`${contain}`, 'g'), border)
         placeholder = placeholder.replace(new RegExp(`${line}`, 'g'), ' ')
 
-        placeholder = placeholder + Array(Math.ceil(i.length / 2)).join(' ') + contain + line
+        // placeholder = placeholder + Array(Math.ceil(i.length / 2)).join(' ') + contain + line
+        placeholder = placeholder + ' ' + contain + line
 
         placeholder = placeholder.replace(new RegExp('^ +', 'g'), '')
         structureJson[i].forEach((val, idx, arr) => {
