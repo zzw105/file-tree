@@ -110,7 +110,8 @@ const program = new Command()
       }
 
       // 对未处理的文件加注释
-      const filePath = `${path}\\${fileName}`
+      const filePath = `${path}\\${fileName}`.replace(directory, '')
+
       if (fileComment[filePath] === undefined) {
         let inputString = ''
         if (!options.skip) inputString = await readLine(`\n\n请输入此${fileType}的注释\n${filePath}\n`)
@@ -145,7 +146,7 @@ const program = new Command()
     for (let i in structureJson) {
       if (Array.isArray(structureJson[i])) {
         // 文件夹添加注释
-        const filePath = `${path}`
+        const filePath = `${path}`.replace(directory, '')
         const annotation = fileComment[filePath]
 
         addOutputString(`\n${placeholder}${i}`, annotation)
@@ -166,7 +167,7 @@ const program = new Command()
           }
 
           // 获取注释
-          const filePath = `${path}\\${typeof val === 'string' ? val : Object.keys(val)[0]}`
+          const filePath = `${path}\\${typeof val === 'string' ? val : Object.keys(val)[0]}`.replace(directory, '')
           const annotation = fileComment[filePath]
 
           if (typeof val === 'string') {
