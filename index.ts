@@ -6,15 +6,35 @@ import { getConfig, newDash, readLine, sortDir } from './util'
 import findup from 'findup-sync'
 import path from 'path'
 import { fileCommentType, fileStructure } from './util/type'
+import defaultConfig = require('./util/defaultConfig.json')
 
 const program = new Command()
 
 ;(async function () {
-  // -v的显示
-  program.version(pac.version)
-
   // 项目的路径
   const directory = process.cwd() // F:\project\tree
+
+  // -v的显示
+  program.version(pac.version).option('-i,--init', '初始化').option('-s,--skip', '跳过标注操作').parse(process.argv)
+
+  // 终端参数
+  const options = program.opts()
+
+  // file-tree目录
+  const folderPath = path.join(directory, './file-tree')
+  try {
+    fs.statSync(folderPath)
+  } catch (err: any) {
+    if (err && err.code === 'ENOENT') fs.mkdirSync(folderPath)
+  }
+
+  // init工作
+  if (options.init) {
+    // 复制默认信息
+    fs.writeFileSync(path.join(directory, './file-tree/config.json'), JSON.stringify(defaultConfig))
+    fs.writeFileSync(path.join(directory, './file-tree/fileComment.json'), JSON.stringify({}))
+    process.exit()
+  }
 
   // 配置项目
   const config = getConfig()
@@ -92,7 +112,8 @@ const program = new Command()
       // 对未处理的文件加注释
       const filePath = `${path}\\${fileName}`
       if (fileComment[filePath] === undefined) {
-        const inputString = await readLine(`\n\n请输入此${fileType}的注释\n${filePath}\n`)
+        let inputString = ''
+        if (!options.skip) inputString = await readLine(`\n\n请输入此${fileType}的注释\n${filePath}\n`)
         fileComment[filePath] = inputString
       }
     }
@@ -107,7 +128,14 @@ const program = new Command()
   const addOutputString = (outStringHeader: string, annotation: string) => {
     const stringLength = outStringHeader.length
 
-    if (annotation) outputString += `${outStringHeader} ${newDash(40 - stringLength)} ${annotation}`
+    // 处理长度过短问题
+    if (config.dashLength <= stringLength) {
+      console.log('配置文件中的dashLength过短，请手动调整后重新运行')
+      process.exit()
+    }
+
+    // 输出文档
+    if (annotation) outputString += `${outStringHeader} ${newDash(config.dashLength - stringLength)} ${annotation}`
     else outputString += outStringHeader
   }
 

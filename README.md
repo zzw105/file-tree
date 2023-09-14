@@ -39,7 +39,7 @@ npm i @zzw_105/file-tree
 
 ## 使用
 
-1. 在项目根目录中新建`file-tree`文件夹，在文件夹创建`config.json`文件
+1. 运行`file-tree --init`初始化项目
 
 2. 编辑`config.json`添加需要忽略的文件或者文件
 
@@ -49,18 +49,27 @@ npm i @zzw_105/file-tree
        "node_modules",
        ".git",
        "dist",
-       "yarn.lock",
-       "yarn-error.log",
-       ".vscode"
-     ]
+       "yarn.lock"
+     ],
+     "dashLength": 40
    }
    ```
 
-3. 命令行直接运行`file-tree`
+3. 命令行运行`file-tree`
 
 4. 更具提示输入响应需要的注释
 
 5. 输出文件地址为`\file-tree\fileTree.md`
+
+## 终端参数
+
+- -i,--init 初始化项目
+- -s,--skip 跳过标注
+
+## config配制
+
+- ignore：string[] 忽略的文件和文件夹
+- dashLength：number 输出文件的破折号长度
 
 ## 问题
 
@@ -73,7 +82,7 @@ npm i @zzw_105/file-tree
 - [ ] 支持全局使用以及命令参数
 - [ ] 路径改为项目根目录为起始
 - [x] 更好的视觉显示效果
-- [ ] 增加init功能
+- [x] 增加init功能
 
 ## 感谢
 
