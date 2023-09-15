@@ -14,5 +14,6 @@
   "ignoreFolder": [
     "file-tree"
   ],
+  "ignoreFilesInFolder": [],
   "dashLength": 40
 }

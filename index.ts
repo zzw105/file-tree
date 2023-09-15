@@ -7,6 +7,7 @@ import findup from 'findup-sync'
 import path from 'path'
 import { fileCommentType, fileStructure } from './util/type'
 import defaultConfig = require('./util/defaultConfig.json')
+import { log } from 'console'
 
 const program = new Command()
 
@@ -48,25 +49,38 @@ const program = new Command()
     if (stats.isDirectory()) {
       let dir = fs.readdirSync(pathString)
 
-      // 过滤忽略文件夹
+      // 过滤忽略目录/扩展名
       if (config.ignoreFolder.includes(path.basename(pathString))) dir = []
-      // 过滤忽略文件
-      let filterDir = dir.filter((item) => !config.ignore.includes(item))
-      // 过滤忽略扩展名
-      filterDir = filterDir.filter((item) => !config.ignoreExtension.includes(getExtension(item)))
 
-      let dirObj = filterDir.map((child) => {
-        let childStats = fs.lstatSync(pathString + '/' + child)
-        return childStats.isDirectory() ? dirToJson(pathString + '/' + child) : child
+      // 过滤忽略文件
+      const filterDir = dir.filter(
+        (item) => !(config.ignore.includes(item) || config.ignoreExtension.includes(getExtension(item)))
+      )
+
+      const dirObj = filterDir.map((child) => {
+        const childPath = pathString + '/' + child
+        const childStats = fs.lstatSync(childPath)
+
+        if (childStats.isDirectory()) {
+          return dirToJson(childPath)
+        } else if (config.ignoreFilesInFolder.find((item) => childPath.includes(item))) {
+          return undefined
+        } else {
+          return child
+        }
       })
 
-      let dirName = pathString.replace(/.*\/(?!$)/g, '')
+      // 清理undefined
+      const filterDirObj = dirObj.filter((item) => item) as (string | fileStructure)[]
+
+      const dirName = pathString.replace(/.*\/(?!$)/g, '')
       // 排序
-      structure[dirName] = sortDir(dirObj)
+      structure[dirName] = sortDir(filterDirObj)
     } else {
       let fileName = pathString.replace(/.*\/(?!$)/g, '')
       return fileName
     }
+
     return structure
   }
 
@@ -101,7 +115,7 @@ const program = new Command()
 
     const arr = structureJson[key]
     let fileName = ''
-    let fileType = '文件夹'
+    let fileType = '目录'
 
     for (let index = 0; index < arr.length; index++) {
       const element = arr[index]
@@ -149,7 +163,7 @@ const program = new Command()
     let { border, contain, line, last } = characters
     for (let i in structureJson) {
       if (Array.isArray(structureJson[i])) {
-        // 文件夹添加注释
+        // 目录添加注释
         const filePath = `${path}`.replace(directory, '')
         const annotation = fileComment[filePath]
 

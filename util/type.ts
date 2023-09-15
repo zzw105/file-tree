@@ -10,6 +10,7 @@ interface configType {
   ignore: string[]
   ignoreExtension: string[]
   ignoreFolder: string[]
+  ignoreFilesInFolder: string[]
   dashLength: number
 }
 export { fileCommentType, fileStructure, configType }
