@@ -2,11 +2,11 @@
   "ignore": [
     "node_modules",
     ".git",
-    "dist",
     "yarn.lock",
     ".vscode",
     ".idea",
-    ".DS_Store"
+    ".DS_Store",
+    "pnpm-lock.yaml"
   ],
   "ignoreExtension": [
     ".log"
@@ -14,6 +14,10 @@
   "ignoreFolder": [
     "file-tree"
   ],
-  "ignoreFilesInFolder": [],
+  "ignoreFilesInFolder": [
+    "dist",
+    "build",
+    "release"
+  ],
   "dashLength": 40
 }

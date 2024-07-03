@@ -7,7 +7,6 @@ import findup from 'findup-sync'
 import path from 'path'
 import { fileCommentType, fileStructure } from './util/type'
 import defaultConfig = require('./util/defaultConfig.json')
-import { log } from 'console'
 
 const program = new Command()
 
